@@ -13,7 +13,7 @@ model User {
   name         String
   age          Int
   gender       String
-  imageUrl     String?
+  imageUrl     String?      @default("https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg")
   phoneNumber  String
   email        String        @unique
   location     String
@@ -21,6 +21,7 @@ model User {
   chats        SymptomChat[] @relation("UserSymptomChats")
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  ambulanceBookings AmbulanceBooking[]
 }
 
 model Doctor {
@@ -32,7 +33,7 @@ model Doctor {
   location       String
   phoneNumber    String
   email          String              @unique
-  imageUrl       String?
+  imageUrl       String?              @default("https://c8.alamy.com/comp/2FJRFJP/flat-male-doctor-avatar-in-medical-coat-and-with-stethoscope-healthcare-vector-illustration-people-cartoon-avatar-profile-character-icon-2FJRFJP.jpg")
   appointments   Appointment[]       @relation("DoctorAppointments")
   availabilities DoctorAvailability[] @relation("DoctorAvailability")
   createdAt      DateTime            @default(now())
@@ -96,4 +97,37 @@ model SymptomChatSymptom {
   symptom        Symptom      @relation(fields: [symptomId], references: [id])
   symptomChat    SymptomChat  @relation(fields: [symptomChatId], references: [id])
   @@id([symptomId, symptomChatId])
+}
+
+model Ambulance {
+  id              String            @id @default(uuid())
+  vehicleNumber   String            @unique
+  hospitalName    String
+  location        String
+  estimatedTime   Int               // Estimated time in minutes
+  driverName      String?
+  driverContact   String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  bookings        AmbulanceBooking[]
+}
+
+model AmbulanceBooking {
+  id              String        @id @default(uuid())
+  userId          String
+  ambulanceId     String
+  user            User          @relation(fields: [userId], references: [userId]) 
+  ambulance       Ambulance     @relation(fields: [ambulanceId], references: [id])
+  status          BookingStatus @default(FREE)
+  bookingTime     DateTime      @default(now())
+  expiresAt       DateTime      // Will be set to bookingTime + 5 minutes
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+
+enum BookingStatus {
+  BOOKED
+  FREE
+  EXPIRED
 }

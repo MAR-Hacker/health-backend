@@ -10,6 +10,8 @@ import { OpenaiModule } from './openai/openai.module';
 import { OpenAiService } from './openai/openai.service';
 import { BookAppointmentModule } from './book-appointment/book-appointment.module';
 import { AcceptAppointmentModule } from './accept-appointment/accept-appointment.module';
+import { AddAmbulancesService } from './add-ambulances/add-ambulances.service';
+import { AmbulanceModule } from './ambulance/ambulance.module';
 
 @Module({
   imports: [
@@ -21,8 +23,9 @@ import { AcceptAppointmentModule } from './accept-appointment/accept-appointment
     OpenaiModule,
     BookAppointmentModule,
     AcceptAppointmentModule,
+    AmbulanceModule,
   ],
   controllers: [AppController],
-  providers: [AppService, OpenAiService],
+  providers: [AppService, OpenAiService, AddAmbulancesService],
 })
 export class AppModule {}

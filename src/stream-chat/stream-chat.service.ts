@@ -20,14 +20,7 @@ export class StreamChatService {
     this.streamClient = StreamChat.getInstance(apiKey, apiSecret);
   }
   async getStreamToken(userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, name: true, imageUrl: true },
-    });
-
-    if (!user) throw new Error('User not found');
-
     // Generate token server-side
-    return this.streamClient.createToken(user.id);
+    return this.streamClient.createToken(userId);
   }
 }

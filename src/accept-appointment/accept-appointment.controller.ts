@@ -36,6 +36,7 @@ export class AcceptAppointmentController {
     return this.acceptAppointmentService.updateStatus(
       appointmentId,
       data.status,
+      data.meetingId,
     );
   }
 }

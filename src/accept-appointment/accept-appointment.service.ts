@@ -5,10 +5,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class AcceptAppointmentService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async updateStatus(appointmentId: string, status: 'CONFIRMED' | 'CANCELLED') {
+  async updateStatus(
+    appointmentId: string,
+    status: 'CONFIRMED' | 'CANCELLED',
+    meetingId?: string,
+  ) {
     return this.prisma.appointment.update({
       where: { id: appointmentId },
-      data: { status },
+      data: { status, meetingId },
     });
   }
 }

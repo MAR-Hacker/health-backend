@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid()) // Primary key (UUID)
+  userId       String        @unique     // Clerk user ID (e.g., user_2abc123)
+  name         String
+  age          Int
+  gender       String
+  imageUrl     String?
+  phoneNumber  String
+  email        String        @unique
+  location     String
+  appointments Appointment[] @relation("UserAppointments")
+  chats        SymptomChat[] @relation("UserSymptomChats")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Doctor {
+  id             String              @id @default(uuid()) // Primary key (UUID)
+  userId         String              @unique     // Clerk user ID (e.g., user_2xyz456)
+  name           String
+  specialization String
+  experience     Int
+  location       String
+  phoneNumber    String
+  email          String              @unique
+  imageUrl       String?
+  appointments   Appointment[]       @relation("DoctorAppointments")
+  availabilities DoctorAvailability[] @relation("DoctorAvailability")
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+}
+
+model Appointment {
+  id              String             @id @default(uuid())
+  date            DateTime
+  reason          String
+  status          AppointmentStatus  @default(PENDING)
+  userId          String
+  doctorId        String
+  availabilityId  String?
+  user            User               @relation("UserAppointments", fields: [userId], references: [userId]) // References User.userId (Clerk ID)
+  doctor          Doctor             @relation("DoctorAppointments", fields: [doctorId], references: [userId]) // References Doctor.userId (Clerk ID)
+  availability    DoctorAvailability? @relation(fields: [availabilityId], references: [id])
+  createdAt       DateTime           @default(now())
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model DoctorAvailability {
+  id           String        @id @default(uuid())
+  doctorId     String
+  doctor       Doctor        @relation("DoctorAvailability", fields: [doctorId], references: [userId]) // References Doctor.userId (Clerk ID)
+  startTime    DateTime      // Example: "2025-04-26T09:00:00Z"
+  endTime      DateTime      // Example: "2025-04-26T17:00:00Z"
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  @@unique([doctorId, startTime, endTime])
+}
+
+model Symptom {
+  id          String        @id @default(uuid())
+  description String
+  symptomChats SymptomChatSymptom[]
+}
+
+model SymptomChat {
+  id                 String              @id @default(uuid())
+  userId             String
+  user               User                @relation("UserSymptomChats", fields: [userId], references: [userId]) // References User.userId (Clerk ID)
+  userInput          String              // The symptoms described by the user
+  aiResponse         String              // The response from AI
+  confidence         Float               // Confidence score from AI
+  possibleCondition  String              // Condition predicted by AI
+  symptoms           SymptomChatSymptom[] // Related symptoms
+  recommendations    String?             // AI recommendations
+  createdAt          DateTime            @default(now())
+}
+
+model SymptomChatSymptom {
+  symptomId      String
+  symptomChatId  String
+  symptom        Symptom      @relation(fields: [symptomId], references: [id])
+  symptomChat    SymptomChat  @relation(fields: [symptomChatId], references: [id])
+  @@id([symptomId, symptomChatId])
+}

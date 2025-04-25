@@ -14,6 +14,7 @@ import { AddAmbulancesService } from './add-ambulances/add-ambulances.service';
 import { AmbulanceModule } from './ambulance/ambulance.module';
 import { ClerkService } from './clerk-service/clerk-service.service';
 import { ClerkServiceModule } from './clerk-service/clerk-service.module';
+import { StreamChatModule } from './stream-chat/stream-chat.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ClerkServiceModule } from './clerk-service/clerk-service.module';
     AcceptAppointmentModule,
     AmbulanceModule,
     ClerkServiceModule,
+    StreamChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, OpenAiService, AddAmbulancesService, ClerkService],

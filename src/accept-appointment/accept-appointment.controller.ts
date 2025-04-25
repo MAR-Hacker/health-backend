@@ -1,6 +1,7 @@
 import { Body, Controller, Param, Patch } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AcceptAppointmentService } from './accept-appointment.service';
+import { UpdateStatusDto } from './dto/create.dto';
 
 @ApiTags('Accept Appointment')
 @Controller('accept-appointment')
@@ -30,7 +31,7 @@ export class AcceptAppointmentController {
   })
   async updateStatus(
     @Param('appointmentId') appointmentId: string,
-    @Body() data: { status: 'CONFIRMED' | 'CANCELLED' },
+    @Body() data: UpdateStatusDto,
   ) {
     return this.acceptAppointmentService.updateStatus(
       appointmentId,

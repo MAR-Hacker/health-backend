@@ -48,6 +48,7 @@ model Appointment {
   userId          String
   doctorId        String
   availabilityId  String?
+  meetingId      String? // For video call
   user            User               @relation("UserAppointments", fields: [userId], references: [userId]) // References User.userId (Clerk ID)
   doctor          Doctor             @relation("DoctorAppointments", fields: [doctorId], references: [userId]) // References Doctor.userId (Clerk ID)
   availability    DoctorAvailability? @relation(fields: [availabilityId], references: [id])
@@ -57,8 +58,8 @@ model Appointment {
 enum AppointmentStatus {
   PENDING
   CONFIRMED
-  COMPLETED
   CANCELLED
+  COMPLETED
 }
 
 model DoctorAvailability {

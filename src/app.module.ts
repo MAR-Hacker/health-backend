@@ -12,6 +12,8 @@ import { BookAppointmentModule } from './book-appointment/book-appointment.modul
 import { AcceptAppointmentModule } from './accept-appointment/accept-appointment.module';
 import { AddAmbulancesService } from './add-ambulances/add-ambulances.service';
 import { AmbulanceModule } from './ambulance/ambulance.module';
+import { ClerkService } from './clerk-service/clerk-service.service';
+import { ClerkServiceModule } from './clerk-service/clerk-service.module';
 
 @Module({
   imports: [
@@ -24,8 +26,9 @@ import { AmbulanceModule } from './ambulance/ambulance.module';
     BookAppointmentModule,
     AcceptAppointmentModule,
     AmbulanceModule,
+    ClerkServiceModule,
   ],
   controllers: [AppController],
-  providers: [AppService, OpenAiService, AddAmbulancesService],
+  providers: [AppService, OpenAiService, AddAmbulancesService, ClerkService],
 })
 export class AppModule {}

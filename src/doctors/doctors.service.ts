@@ -1,15 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDoctorAvaliabilityDto } from './dto/create-doctor.dto';
+import { ClerkService } from 'src/clerk-service/clerk-service.service';
 
 @Injectable()
 export class DoctorsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly clerkService: ClerkService,
+  ) {}
 
   async create(createDoctorDto: any) {
-    return this.prisma.doctor.create({
+    const newUser = this.prisma.doctor.create({
       data: createDoctorDto,
     });
+
+    if (createDoctorDto.userId) {
+      await this.clerkService.setUserMetadata(
+        createDoctorDto.userId,
+        'role',
+        'doctor',
+      );
+    }
+
+    return newUser;
   }
 
   async getAll() {

@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ClerkService } from 'src/clerk-service/clerk-service.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly clerkService: ClerkService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     if (
@@ -15,9 +19,19 @@ export class UsersService {
       throw new Error('Fill all the fields');
     }
 
-    return this.prisma.user.create({
+    const newUser = await this.prisma.user.create({
       data: createUserDto,
     });
+
+    if (createUserDto.userId) {
+      await this.clerkService.setUserMetadata(
+        createUserDto.userId,
+        'role',
+        'user',
+      );
+    }
+
+    return newUser;
   }
 
   async getAll() {
